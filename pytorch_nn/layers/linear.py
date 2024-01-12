@@ -37,7 +37,7 @@ class Linear(nn.Module):
                 torch.empty(out_features, device=device, dtype=dtype)
             )
         else:
-            self.bias = None
+            self.register_parameter("bias", None)
 
         self._init_params()
 
@@ -56,7 +56,12 @@ class Linear(nn.Module):
                 self.bias.uniform_(-sqrt(k), sqrt(k))
 
     def forward(self, x: Tensor) -> Tensor:
-        return einsum(x, self.weight, "b d, c d -> b c") + self.bias
+        x = einsum(x, self.weight, "b d, c d -> b c")
+        
+        if self.bias is not None:
+            x += self.bias
+
+        return x
 
 
 class Bilinear(nn.Module):
@@ -76,7 +81,7 @@ class Bilinear(nn.Module):
                 torch.empty(out_features, device=device, dtype=dtype)
             )
         else:
-            self.bias = None
+            self.register_parameter("bias", None)
 
         self._init_params()
 
@@ -94,4 +99,9 @@ class Bilinear(nn.Module):
                 self.bias.uniform_(-sqrt(k), sqrt(k))
 
     def forward(self, x1: Tensor, x2: Tensor) -> Tensor:
-        return einsum(x1, x2, self.weight, "b d, b k, c d k -> b c") + self.bias
+        x = einsum(x1, x2, self.weight, "b d, b k, c d k -> b c")
+        
+        if self.bias is not None:
+            x += self.bias
+
+        return x

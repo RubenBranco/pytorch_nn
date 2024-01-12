@@ -61,10 +61,24 @@ def test_linear(in_features, out_features, x):
 
     assert torch.allclose(linear_pnn(x), linear_torch(x))
 
+    linear_pnn = Linear(in_features, out_features, bias=False)
+    linear_torch = nn.Linear(in_features, out_features, bias=False)
+
+    copy_weights(linear_pnn, linear_torch)
+
+    assert torch.allclose(linear_pnn(x), linear_torch(x))
+
 
 def test_bilinear(in_features, in2_features, out_features, x, x2):
     bilinear_pnn = Bilinear(in_features, in2_features, out_features)
     bilinear_torch = nn.Bilinear(in_features, in2_features, out_features)
+
+    copy_weights(bilinear_pnn, bilinear_torch)
+
+    assert torch.allclose(bilinear_pnn(x, x2), bilinear_torch(x, x2))
+
+    bilinear_pnn = Bilinear(in_features, in2_features, out_features, bias=False)
+    bilinear_torch = nn.Bilinear(in_features, in2_features, out_features, bias=False)
 
     copy_weights(bilinear_pnn, bilinear_torch)
 
