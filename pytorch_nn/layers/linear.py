@@ -57,7 +57,7 @@ class Linear(nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         x = einsum(x, self.weight, "b d, c d -> b c")
-        
+
         if self.bias is not None:
             x += self.bias
 
@@ -65,7 +65,15 @@ class Linear(nn.Module):
 
 
 class Bilinear(nn.Module):
-    def __init__(self, in1_features: int, in2_features: int, out_features: int, bias: bool = True, device=None, dtype=None):
+    def __init__(
+        self,
+        in1_features: int,
+        in2_features: int,
+        out_features: int,
+        bias: bool = True,
+        device=None,
+        dtype=None,
+    ):
         super().__init__()
         self.in1_features = in1_features
         self.in2_features = in2_features
@@ -74,7 +82,9 @@ class Bilinear(nn.Module):
         self.dtype = dtype
 
         self.weight = nn.Parameter(
-            torch.empty((out_features, in1_features, in2_features), device=device, dtype=dtype)
+            torch.empty(
+                (out_features, in1_features, in2_features), device=device, dtype=dtype
+            )
         )
         if bias:
             self.bias = nn.Parameter(
@@ -100,7 +110,7 @@ class Bilinear(nn.Module):
 
     def forward(self, x1: Tensor, x2: Tensor) -> Tensor:
         x = einsum(x1, x2, self.weight, "b d, b k, c d k -> b c")
-        
+
         if self.bias is not None:
             x += self.bias
 

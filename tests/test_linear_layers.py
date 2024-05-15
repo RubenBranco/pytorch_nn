@@ -2,7 +2,7 @@ import pytest
 import torch
 import torch.nn as nn
 
-from pytorch_nn import Identity, Linear, Bilinear
+from pytorch_nn import Identity, Linear, Bilinear, copy_weights
 
 
 @pytest.fixture
@@ -35,15 +35,11 @@ def x(in_features, batch_size, seed):
     torch.manual_seed(seed)
     return torch.rand((batch_size, in_features))
 
+
 @pytest.fixture
 def x2(in2_features, batch_size, seed):
     torch.manual_seed(seed)
     return torch.rand((batch_size, in2_features))
-
-
-def copy_weights(src: nn.Module, dst: nn.Module):
-    for src_param, dst_param in zip(src.parameters(), dst.parameters()):
-        dst_param.data.copy_(src_param.data)
 
 
 def test_identity(x):
